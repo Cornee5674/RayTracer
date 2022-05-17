@@ -23,14 +23,22 @@ namespace RayTracer
 
         public Raytracer(Surface screen)
         {
-            this.screen = screen;
             this.baseX = screen.width / 2;
-            this.camera = new Camera();
+
+            this.screen = screen;
+            this.camera = new Camera(screen.width / 2, screen.height);
             this.scene = new Scene();
         }
 
         public void Render()
         {
+            for (int y = 0; y < screen.height; y++)
+            {
+                for (int x = 0; x < screen.width / 2; x++)
+                {
+                    camera.GetRay(x, y);
+                }
+            }
         }
     }
 }
