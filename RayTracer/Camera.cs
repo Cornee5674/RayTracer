@@ -24,6 +24,7 @@ namespace RayTracer
 
         Vector3 lookAt;
         Vector3 up;
+        Vector3 right;
 
         struct ScreenPlane
         {
@@ -42,12 +43,14 @@ namespace RayTracer
             this.pos = new Vector3(0, 0, 0);
             this.lookAt = new Vector3(0, 0, 1);
             this.up = new Vector3(0, 1, 0);
+            this.right = new Vector3(1, 0, 0);
 
             this.screenPlane = new ScreenPlane();
-            screenPlane.topLeft = (-2, 2, 1);
-            screenPlane.topRight = (2, 2, 1);
-            screenPlane.bottomLeft = (-2, -2, 1);
-            screenPlane.bottomRight = (2, -2, 1);
+            Vector3 C = pos + 1f*lookAt;
+            screenPlane.topLeft = C + up - right;
+            screenPlane.topRight = C + up + right;
+            screenPlane.bottomLeft = C - up - right;
+            screenPlane.bottomRight = C - up + right;
         }
 
         public Ray GetRay(int x, int y, int width, int height)
@@ -55,8 +58,8 @@ namespace RayTracer
             float widthNorm = (float)x / width;
             float heightNorm = (float)y / height;
             Vector3 direction = screenPlane.topLeft + widthNorm * (screenPlane.topRight - screenPlane.topLeft) + heightNorm * (screenPlane.bottomLeft - screenPlane.topLeft);
-            direction -= pos;
             direction.Normalize();
+            direction -= pos;
             Ray ray = new Ray(pos, direction);
             return ray;         
         }

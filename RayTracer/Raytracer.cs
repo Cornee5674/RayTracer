@@ -37,8 +37,8 @@ namespace RayTracer
             this.camera = new Camera(screen.width / 2, screen.height);
             this.scene = new Scene();
 
-            scene.AddPrimitive(new Sphere(new Vector3(-8, 5, 20), 8));
-            Sphere sphere = new Sphere(new Vector3(2, 0, 15), 8);
+            scene.AddPrimitive(new Sphere(new Vector3(0, 0, 15), 2));
+            Sphere sphere = new Sphere(new Vector3(12, 0, 15), 4);
             sphere.setColor();
             scene.AddPrimitive(sphere);
 
@@ -58,6 +58,16 @@ namespace RayTracer
                         Vector3 color = intersection.nearestPrimitive.color;
                         int colorInt = mixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
                         screen.pixels[x + screen.width / 2 + y * screen.width] = colorInt;
+                    }
+                }
+            }
+            for (int y = 0; y < screen.height; y++)
+            {
+                for (int x = 0; x < screen.width; x++)
+                {
+                    if (x == screen.width / 2)
+                    {
+                        screen.pixels[x + y * screen.width] = mixColor(254, 57, 139);
                     }
                 }
             }
