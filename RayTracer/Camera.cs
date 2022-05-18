@@ -20,7 +20,7 @@ namespace RayTracer
         int maxX;
         int maxY;
 
-        Vector3 pos;
+        public Vector3 pos;
 
         Vector3 lookAt;
         Vector3 up;
@@ -50,19 +50,16 @@ namespace RayTracer
             screenPlane.bottomRight = (2, -2, 1);
         }
 
-        public Vector3 GetRay(int x, int y)
+        public Ray GetRay(int x, int y, int width, int height)
         {
-            float xMinToMax = screenPlane.topRight.X - screenPlane.topLeft.X;
-            float xScaled = xMinToMax / maxX;
-            float xPos = screenPlane.topLeft.X + (xScaled * x);
-
-            float yMinToMax = screenPlane.topLeft.Y - screenPlane.bottomLeft.Y;
-            float yScaled = yMinToMax / maxY;
-            float yPos = screenPlane.bottomLeft.Y + (yScaled * y);
-
-            Vector3 screenPos = new Vector3(xPos, yPos, 1);
-
-            return screenPos - pos;
+            float widthNorm = (float)x / width;
+            float heightNorm = (float)y / height;
+            Vector3 direction = screenPlane.topLeft + widthNorm * (screenPlane.topRight - screenPlane.topLeft) + heightNorm * (screenPlane.bottomLeft - screenPlane.topLeft);
+            direction -= pos;
+            direction.Normalize();
+            Ray ray = new Ray(pos, direction);
+            return ray;         
         }
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Mathematics;
 
 namespace RayTracer
 {
@@ -13,5 +14,21 @@ namespace RayTracer
 
     public class Primitive
     {
+        public Vector3 color;
+
+        public Primitive()
+        {
+            color = new Vector3(252f / 255, 178f / 255, 199f / 255);
+        }
+
+        public void setColor()
+        {
+            color = new Vector3(199f / 255, 178f / 255, 252f / 255);
+        }
+
+        public virtual Intersection Intersect(Ray ray)
+        {
+            return new Intersection();
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Mathematics;
 
 namespace RayTracer
 {
@@ -11,5 +12,13 @@ namespace RayTracer
     //intersection point.
     public class Intersection
     {
+        public Primitive nearestPrimitive;
+        public float distance;
+        Vector3 normal;
+
+        public Intersection()
+        {
+
+        }
     }
 }
