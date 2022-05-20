@@ -64,5 +64,14 @@ namespace RayTracer
             return ray;         
         }
 
+        public Vector3 GetTopLeft()
+        {
+            return screenPlane.topLeft;
+        }
+        public Vector3 GetTopRight()
+        {
+            return screenPlane.topRight;
+        }
+
     }
 }

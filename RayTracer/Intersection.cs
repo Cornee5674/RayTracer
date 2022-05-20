@@ -14,7 +14,7 @@ namespace RayTracer
     {
         public Primitive nearestPrimitive;
         public float distance;
-        Vector3 normal;
+        public Vector3 normal;
 
         public Intersection()
         {

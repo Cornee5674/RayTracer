@@ -15,19 +15,19 @@ namespace RayTracer
 
         public Intersection GetClosestIntersection(Ray ray)
         {
-            List<Intersection> intersections = new List<Intersection>();
+            Intersection closestIntersection = new Intersection();
+            closestIntersection.distance = ray.distance;
             for (int i = 0; i < primitives.Count; i++)
             {
-                intersections.Add(primitives[i].Intersect(ray));
-            }
-            for (int i = 0; i < intersections.Count; i++)
-            {
-                if (ray.distance == intersections[i].distance)
+                primitives[i].Intersect(ray);
+                if (ray.distance != -1 && ray.distance < closestIntersection.distance)
                 {
-                    return intersections[i];
+                    closestIntersection.distance = ray.distance;
+                    closestIntersection.nearestPrimitive = primitives[i];
+                    closestIntersection.normal = closestIntersection.nearestPrimitive.GetNormal(ray);
                 }
             }
-            return new Intersection();
+            return closestIntersection;
         }
 
         public void AddPrimitive(Primitive prim)

@@ -15,6 +15,7 @@ namespace RayTracer
     public class Primitive
     {
         public Vector3 color;
+        public string name = "Primitive";
 
         public Primitive()
         {
@@ -26,9 +27,14 @@ namespace RayTracer
             color = new Vector3(199f / 255, 178f / 255, 252f / 255);
         }
 
-        public virtual Intersection Intersect(Ray ray)
+        public virtual bool Intersect(Ray ray)
         {
-            return new Intersection();
+            return false;
+        }
+
+        public virtual Vector3 GetNormal(Ray ray)
+        {
+            return new Vector3(0, 0, 0);
         }
     }
 }
