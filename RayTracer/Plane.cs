@@ -14,10 +14,11 @@ namespace RayTracer
 
         public string name = "Plane";
 
-        public Plane(Vector3 location, Vector3 normal)
+        public Plane(Vector3 location, Vector3 normal, Material material)
         {
             this.knownPoint = location;
             this.normal = normal;
+            this.material = material;
         }
 
         public override bool Intersect(Ray ray)

@@ -9,15 +9,16 @@ namespace RayTracer
 {
     public class Sphere: Primitive
     {
-        Vector3 position;
-        float radius;
+        public Vector3 position;
+        public float radius;
 
         public string name = "Sphere";
 
-        public Sphere(Vector3 pos, float radius)
+        public Sphere(Vector3 pos, float radius, Material material)
         {
             this.position = pos;
             this.radius = radius;
+            this.material = material;
         }
 
         //TODO: Als object in camera zit, gekke dingen
@@ -42,12 +43,23 @@ namespace RayTracer
             return false;
         }
 
+
+
         public override Vector3 GetNormal(Ray ray)
         {
             Vector3 intersect = ray.origin + ray.distance * ray.direction;
             Vector3 normal = intersect - position;
             normal.Normalize();
             return normal;
+        }
+
+        public override float X(float angle)
+        {
+            return (radius * (float)Math.Cos(angle * Math.PI / 180)) + position.X;
+        }
+        public override float Y(float angle)
+        {
+            return (radius * (float)Math.Sin(angle * Math.PI / 180)) + position.Z;
         }
     }
 }

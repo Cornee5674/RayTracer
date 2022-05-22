@@ -30,7 +30,7 @@ namespace RayTracer
         }
 
         // TODO: Automatiseer dit ipv hardcode
-        int maxZ = 32;
+        int maxZ = 40;
         int minZ = 0;
         int maxX = 20;
         int minX = -20;
@@ -43,17 +43,20 @@ namespace RayTracer
             this.camera = new Camera(screen.width / 2, screen.height);
             this.scene = new Scene();
 
-            Sphere sphere3 = new Sphere(new Vector3(-5, 0, 8), 3);
-            Sphere sphere = new Sphere(new Vector3(0, 0, 15), 2);
-            Sphere sphere1 = new Sphere(new Vector3(12, 0, 15), 3);
+            Sphere sphere3 = new Sphere(new Vector3(-5, 0, 8), 3, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
+            Sphere sphere = new Sphere(new Vector3(0, 0, 15), 2, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
+            Sphere sphere1 = new Sphere(new Vector3(12, 0, 15), 3, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
+            Sphere sphere2 = new Sphere(new Vector3(12, 6, 15), 3, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
+            sphere2.setColor();
             sphere.setColor();
             sphere1.setColor();
             sphere3.setColor();
             scene.AddPrimitive(sphere);
             scene.AddPrimitive(sphere1);
             scene.AddPrimitive(sphere3);
-
-            scene.AddPrimitive(new Plane(new Vector3(0, -5, 100), (0, 1, 0)));
+            scene.AddPrimitive(sphere2);
+            scene.AddLight(new Light((0, 12, 10), (200f, 200f, 200f)));
+            scene.AddPrimitive(new Plane(new Vector3(0, -5, 100), (0, 1, 0), new NoMaterial((252f / 255, 178f / 255, 199f / 255))));
 
         }
 
@@ -67,11 +70,14 @@ namespace RayTracer
                     Intersection intersection = scene.GetClosestIntersection(ray);
                     if (intersection.nearestPrimitive != null)
                     {
-                        Vector3 color = intersection.nearestPrimitive.color;
+                        Vector3 color = scene.isInLight(intersection, ray);
+                        if (color.X > 1) color.X = 1;
+                        if (color.Y > 1) color.Y = 1;
+                        if (color.Z > 1) color.Z = 1;
                         int colorInt = mixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
                         screen.pixels[x + screen.width / 2 + y * screen.width] = colorInt;
                     }
-                    if (y == screen.height / 2 && x % 20 == 0)
+                    if (y == screen.height / 2 && x % 50 == 0)
                     {
                         DrawDebugRay(ray, intersection);
                     }
@@ -108,6 +114,26 @@ namespace RayTracer
             Coordinate screenCoordinateLeft = GetCoordinate(camera.GetTopLeft());
             Coordinate screenCoordinateRight = GetCoordinate(camera.GetTopRight());
             screen.Line((int)screenCoordinateLeft.x, (int)screenCoordinateLeft.z, (int)screenCoordinateRight.x, (int)screenCoordinateRight.z, 255 * 255 * 255);
+
+            List<Primitive> primitives = scene.primitives;
+            int amountOfLines = 100;
+            float angle = 360f / amountOfLines;
+            for (int i = 0; i < primitives.Count; i++)
+            {
+                float oldAngle = 0f;
+                for (int j = 1; j <= amountOfLines; j++)
+                {
+                    float oldX = primitives[i].X(oldAngle);                    
+                    float oldY = primitives[i].Y(oldAngle);
+                    float newX = primitives[i].X(angle * j);
+                    float newY = primitives[i].Y(angle * j);
+                    oldAngle += angle;
+                 
+                    Coordinate coordinateOld = GetCoordinate((oldX, 0, oldY));
+                    Coordinate coordinateNew = GetCoordinate((newX, 0, newY));
+                    screen.Line((int)coordinateOld.x, (int)coordinateOld.z, (int)coordinateNew.x, (int)coordinateNew.z, 255 * 255 * 255);
+                }
+            }
         }
 
         void DrawDebugRay(Ray ray, Intersection intersection)

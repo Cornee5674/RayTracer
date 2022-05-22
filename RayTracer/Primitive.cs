@@ -16,10 +16,11 @@ namespace RayTracer
     {
         public Vector3 color;
         public string name = "Primitive";
+        public Material material;
 
         public Primitive()
         {
-            color = new Vector3(252f / 255, 178f / 255, 199f / 255);
+            //color = new Vector3(252f / 255, 178f / 255, 199f / 255);
         }
 
         public void setColor()
@@ -35,6 +36,14 @@ namespace RayTracer
         public virtual Vector3 GetNormal(Ray ray)
         {
             return new Vector3(0, 0, 0);
+        }
+        public virtual float X(float angle)
+        {
+            return 0;
+        }
+        public virtual float Y(float angle)
+        {
+            return 0;
         }
     }
 }

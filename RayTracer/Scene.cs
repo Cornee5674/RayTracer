@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Mathematics;
 
 namespace RayTracer
 {
@@ -10,7 +11,7 @@ namespace RayTracer
     //method, which loops over the primitives and returns the closest intersection.
     public class Scene
     {
-        List<Primitive> primitives = new List<Primitive>();
+        public List<Primitive> primitives = new List<Primitive>();
         List<Light> lights = new List<Light>();
 
         public Intersection GetClosestIntersection(Ray ray)
@@ -30,9 +31,47 @@ namespace RayTracer
             return closestIntersection;
         }
 
+        public Vector3 isInLight(Intersection intersection, Ray ray)
+        {
+            Vector3 intersectionPoint = intersection.distance * ray.direction;
+            intersectionPoint += intersection.normal * 0.0001f;
+            bool isInShadow = false;
+            for (int i = 0; i < lights.Count; i++)
+            {
+                Vector3 direction = lights[i].pos - intersectionPoint;
+                direction.Normalize();
+                for (int j = 0; j < primitives.Count; j++)
+                {
+                    if (primitives[j].Intersect(new Ray(intersectionPoint, direction))) isInShadow = true;
+                }
+            }
+            Vector3 color = intersection.nearestPrimitive.color;
+            if (!isInShadow)
+            {
+                for (int i = 0; i < lights.Count; i++)
+                {
+                    float distance = Vector3.Distance(intersectionPoint, lights[i].pos);
+                    Vector3 lightToObject = lights[i].pos - intersectionPoint;
+                    lightToObject.Normalize();
+                    color = intersection.nearestPrimitive.material.materialColor(distance, color, lights[i].color, intersection.normal, lightToObject);
+                }
+            }else
+            {
+                color = (0f, 0f, 0f);
+            }  
+            return color;
+        }
+
         public void AddPrimitive(Primitive prim)
         {
             primitives.Add(prim);
         }
+
+        public void AddLight(Light light)
+        {
+            lights.Add(light);
+        }
+
+        
     }
 }
