@@ -45,11 +45,11 @@ namespace RayTracer
 
             scene.AddPrimitive(new Sphere(new Vector3(-8, 0, 6), 3, new Diffuse((1f, 0f, 0f)), (1f, 0f, 0f)));
             scene.AddPrimitive(new Sphere(new Vector3(0, 0, 8), 3, new Mirror(), (.3f, .5f, .8f)));
-            scene.AddPrimitive(new Sphere(new Vector3(8, 0, 6), 3, new DiffuseGlossy(30, (0f, 1f, 0f), (0f, 1f, 0f)), (0f, 1f, 0f)));
-
+            scene.AddPrimitive(new Sphere(new Vector3(8, 0, 9), 3, new DiffuseGlossy(50, (0f, 1f, 0f), (0f, 1f, 0f)), (0f, 1f, 0f)));
+            scene.AddPrimitive(new Sphere(new Vector3(5, -2, 4), 1, new Glossy(50, (0f, 0f, 1f)), (0f, 0f, 1f)));
 
             scene.AddLight(new Light((-4, 8, 3), (50f, 50f, 50f)));
-            scene.AddLight(new Light((4, 8, 3), (50f, 50f, 50f)));
+            scene.AddLight(new Light((4, 12, 3), (50f, 50f, 50f)));
             scene.AddPrimitive(new Plane(new Vector3(0, -3f, 10), (0, 1, 0), new Diffuse((252f / 255, 178f / 255, 199f / 255)), (252f / 255, 178f / 255, 199f / 255)));
 
         }
