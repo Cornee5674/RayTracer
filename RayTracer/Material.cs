@@ -10,7 +10,7 @@ namespace RayTracer
     public class Material
     {
         public Vector3 ambientLight = (0.17f, 0.17f, 0.17f);
-
+        public bool isMirror;
       
         public virtual Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
         {
@@ -24,6 +24,7 @@ namespace RayTracer
         public Diffuse(Vector3 diffuseColor)
         {
             this.diffuseColor = diffuseColor;
+            this.isMirror = false;
         }
         public override Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
         {
@@ -44,6 +45,7 @@ namespace RayTracer
         {
             this.glossiness = glossiness;
             this.specularCoefficient = specularCoefficient;
+            this.isMirror=false;
         }
         public override Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
         {
@@ -71,6 +73,7 @@ namespace RayTracer
             this.glossiness= glossiness;
             this.specularCoefficient= specularCoefficient;
             this.diffuseColor= diffuseColor;
+            this.isMirror = false;
         }
 
         public override Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
@@ -85,6 +88,13 @@ namespace RayTracer
             toEye.Normalize();
             float angle2 = (float)Math.Max(0, Math.Pow(Vector3.Dot(toEye, R), glossiness));
             return distanceAttenuation * light.color * (diffuseColor * angle1 + specularCoefficient * angle2);
+        }
+    }
+    public class Mirror: Material
+    {
+        public Mirror()
+        {
+            this.isMirror = true;
         }
     }
     public class NoMaterial: Material

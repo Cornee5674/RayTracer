@@ -35,29 +35,28 @@ namespace RayTracer
         {
             Vector3 intersectionPoint = intersection.distance * ray.direction;
             intersectionPoint += intersection.normal * 0.0001f;
-            bool isInShadow = false;
+            bool[] isInLight = new bool[lights.Count];
             for (int i = 0; i < lights.Count; i++)
             {
                 Vector3 direction = lights[i].pos - intersectionPoint;
                 direction.Normalize();
+                bool hasIntersection = false;
                 for (int j = 0; j < primitives.Count; j++)
                 {
                     if (primitives[j].Intersect(new Ray(intersectionPoint, direction)))
                     {
-                        isInShadow = true;
+                        hasIntersection = true;
                     }
                 }
+                isInLight[i] = hasIntersection;
             }
             Vector3 color = (0, 0, 0);
-            if (!isInShadow)
+            for (int i = 0; i < lights.Count; i++)
             {
-                for (int i = 0; i < lights.Count; i++)
+                if (!isInLight[i])
                 {
                     color += intersection.nearestPrimitive.material.materialColor(ray, intersection, lights[i], intersectionPoint);
                 }
-            }else
-            {
-                color = (0f, 0f, 0f);
             }
             color += intersection.nearestPrimitive.material.ambientLight * intersection.nearestPrimitive.color;
             return color;

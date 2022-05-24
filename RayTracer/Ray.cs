@@ -13,6 +13,8 @@ namespace RayTracer
         public Vector3 direction;
         public float distance = 1000;
 
+        public int numberOfBounces = 0;
+
         public Ray(Vector3 origin, Vector3 direction)
         {
             this.origin = origin;
