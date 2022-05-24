@@ -17,9 +17,6 @@ namespace RayTracer
     //setup works, you must make this more flexible.
     public class Camera
     {
-        int maxX;
-        int maxY;
-
         public Vector3 pos;
 
         Vector3 lookAt;
@@ -36,17 +33,15 @@ namespace RayTracer
 
         ScreenPlane screenPlane;
 
-        public Camera(int maxX, int maxY)
+        public Camera()
         {
-            this.maxX = maxX;
-            this.maxY = maxY;
             this.pos = new Vector3(0, 0, 0);
             this.lookAt = new Vector3(0, 0, 1);
             this.up = new Vector3(0, 1, 0);
             this.right = new Vector3(1, 0, 0);
 
             this.screenPlane = new ScreenPlane();
-            Vector3 C = pos + 1f*lookAt;
+            Vector3 C = pos + 0.5f*lookAt;
             screenPlane.topLeft = C + up - right;
             screenPlane.topRight = C + up + right;
             screenPlane.bottomLeft = C - up - right;

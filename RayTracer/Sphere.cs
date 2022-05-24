@@ -14,11 +14,12 @@ namespace RayTracer
 
         public string name = "Sphere";
 
-        public Sphere(Vector3 pos, float radius, Material material)
+        public Sphere(Vector3 pos, float radius, Material material, Vector3 color)
         {
             this.position = pos;
             this.radius = radius;
             this.material = material;
+            this.color = color;
         }
 
         //TODO: Als object in camera zit, gekke dingen

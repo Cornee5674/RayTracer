@@ -9,34 +9,88 @@ namespace RayTracer
 {
     public class Material
     {
-        public Vector3 color;
+        public Vector3 ambientLight = (0.17f, 0.17f, 0.17f);
 
       
-        public virtual Vector3 materialColor(float distance, Vector3 objectColor, Vector3 lightColor, Vector3 normal, Vector3 lightToObject)
+        public virtual Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
         {
-            return color;
+            return (0, 0, 0);
         }
     }
 
     public class Diffuse: Material
     {
-        public Diffuse(Vector3 color)
+        Vector3 diffuseColor;
+        public Diffuse(Vector3 diffuseColor)
         {
-            this.color = color;
+            this.diffuseColor = diffuseColor;
         }
-        public override Vector3 materialColor(float distance, Vector3 objectColor, Vector3 lightColor, Vector3 normal, Vector3 lightToObject)
+        public override Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
         {
-            float distanceAttenuation = 1 / (distance * distance);
-            Vector3 newColor = objectColor * lightColor;
-            float angle = Math.Max(0, Vector3.Dot(normal, lightToObject));
-            return distanceAttenuation * newColor * angle;
+            float distanceSquared = Vector3.DistanceSquared(light.pos, intersectionPoint);
+            float distanceAttenuation = 1 / distanceSquared;
+            Vector3 newLight = light.color * diffuseColor;
+            Vector3 toLight = light.pos - intersectionPoint;
+            toLight.Normalize();
+            float angle = Math.Max(0, Vector3.Dot(intersection.normal, toLight));
+            return distanceAttenuation * newLight * angle;
+        }
+    }
+    public class Glossy: Material
+    {
+        float glossiness;
+        Vector3 specularCoefficient;
+        public Glossy(float glossiness, Vector3 specularCoefficient)
+        {
+            this.glossiness = glossiness;
+            this.specularCoefficient = specularCoefficient;
+        }
+        public override Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
+        {
+            float distanceSquared = Vector3.DistanceSquared(light.pos, intersectionPoint);
+            float distanceAttenuation = 1 / distanceSquared;
+            Vector3 newLight = light.color * specularCoefficient;
+            Vector3 toLight = light.pos - intersectionPoint;
+            toLight.Normalize();
+
+            Vector3 R = toLight - 2 * Vector3.Dot(toLight, intersection.normal) * intersection.normal;
+            Vector3 toEye = ray.origin - intersectionPoint;
+            toEye.Normalize();
+
+            float angle = (float)Math.Max(0, Math.Pow(Vector3.Dot(toEye, R), glossiness));
+            return distanceAttenuation * newLight * angle;
+        }
+    }
+    public class DiffuseGlossy: Material
+    {
+        float glossiness;
+        Vector3 specularCoefficient;
+        Vector3 diffuseColor;
+        public DiffuseGlossy(float glossiness, Vector3 specularCoefficient, Vector3 diffuseColor)
+        {
+            this.glossiness= glossiness;
+            this.specularCoefficient= specularCoefficient;
+            this.diffuseColor= diffuseColor;
+        }
+
+        public override Vector3 materialColor(Ray ray, Intersection intersection, Light light, Vector3 intersectionPoint)
+        {
+            float distanceSquared = Vector3.DistanceSquared(light.pos, intersectionPoint);
+            float distanceAttenuation = 1 / distanceSquared;
+            Vector3 toLight = light.pos - intersectionPoint;
+            toLight.Normalize();
+            float angle1 = Math.Max(0, Vector3.Dot(intersection.normal, toLight));
+            Vector3 R = toLight - 2 * Vector3.Dot(toLight, intersection.normal) * intersection.normal;
+            Vector3 toEye = ray.origin - intersectionPoint;
+            toEye.Normalize();
+            float angle2 = (float)Math.Max(0, Math.Pow(Vector3.Dot(toEye, R), glossiness));
+            return distanceAttenuation * light.color * (diffuseColor * angle1 + specularCoefficient * angle2);
         }
     }
     public class NoMaterial: Material
     {
-        public NoMaterial(Vector3 color)
+        public NoMaterial()
         {
-            this.color = color;
         }
     }
 }

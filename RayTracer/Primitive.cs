@@ -14,19 +14,15 @@ namespace RayTracer
 
     public class Primitive
     {
-        public Vector3 color;
         public string name = "Primitive";
         public Material material;
+        public Vector3 color;
 
         public Primitive()
         {
             //color = new Vector3(252f / 255, 178f / 255, 199f / 255);
         }
 
-        public void setColor()
-        {
-            color = new Vector3(199f / 255, 178f / 255, 252f / 255);
-        }
 
         public virtual bool Intersect(Ray ray)
         {

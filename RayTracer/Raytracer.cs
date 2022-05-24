@@ -40,23 +40,17 @@ namespace RayTracer
             this.baseX = screen.width / 2;
 
             this.screen = screen;
-            this.camera = new Camera(screen.width / 2, screen.height);
+            this.camera = new Camera();
             this.scene = new Scene();
 
-            Sphere sphere3 = new Sphere(new Vector3(-5, 0, 8), 3, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
-            Sphere sphere = new Sphere(new Vector3(0, 0, 15), 2, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
-            Sphere sphere1 = new Sphere(new Vector3(12, 0, 15), 3, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
-            Sphere sphere2 = new Sphere(new Vector3(12, 6, 15), 3, new Diffuse((252f / 255, 178f / 255, 199f / 255)));
-            sphere2.setColor();
-            sphere.setColor();
-            sphere1.setColor();
-            sphere3.setColor();
-            scene.AddPrimitive(sphere);
-            scene.AddPrimitive(sphere1);
-            scene.AddPrimitive(sphere3);
-            scene.AddPrimitive(sphere2);
-            scene.AddLight(new Light((0, 12, 10), (200f, 200f, 200f)));
-            scene.AddPrimitive(new Plane(new Vector3(0, -5, 100), (0, 1, 0), new NoMaterial((252f / 255, 178f / 255, 199f / 255))));
+            scene.AddPrimitive(new Sphere(new Vector3(-8, 0, 6), 3, new Diffuse((1f, 0f, 0f)), (1f, 0f, 0f)));
+            scene.AddPrimitive(new Sphere(new Vector3(0, 0, 6), 3, new DiffuseGlossy(2, (0f, 1f, 0f), (0f, 1f, 0f)), (0f, 1f, 0f)));
+            scene.AddPrimitive(new Sphere(new Vector3(8, 0, 6), 3, new Glossy(2, (0f, 0f, 1f)), (0f, 0f, 1f)));
+
+
+            scene.AddLight(new Light((-4, 8, 3), (50f, 50f, 50)));
+            //scene.AddLight(new Light((0, 5, 1), (1f, 1f, 1f)));
+            scene.AddPrimitive(new Plane(new Vector3(0, -3f, 10), (0, 1, 0), new Diffuse((252f / 255, 178f / 255, 199f / 255)), (252f / 255, 178f / 255, 199f / 255)));
 
         }
 
@@ -68,6 +62,10 @@ namespace RayTracer
                 {
                     Ray ray = camera.GetRay(x, y, screen.height, screen.width / 2);
                     Intersection intersection = scene.GetClosestIntersection(ray);
+                    if (y == screen.height / 2 && x % 50 == 0)
+                    {
+                        DrawDebugRay(ray, intersection);
+                    }
                     if (intersection.nearestPrimitive != null)
                     {
                         Vector3 color = scene.isInLight(intersection, ray);
@@ -76,11 +74,11 @@ namespace RayTracer
                         if (color.Z > 1) color.Z = 1;
                         int colorInt = mixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
                         screen.pixels[x + screen.width / 2 + y * screen.width] = colorInt;
-                    }
-                    if (y == screen.height / 2 && x % 50 == 0)
+                    }else
                     {
-                        DrawDebugRay(ray, intersection);
+                        screen.pixels[x + screen.width / 2 + y * screen.width] = mixColor(0, 0, 0);
                     }
+                    
                 }
             }
             for (int y = 0; y < screen.height; y++)

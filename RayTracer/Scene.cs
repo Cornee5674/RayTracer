@@ -42,23 +42,24 @@ namespace RayTracer
                 direction.Normalize();
                 for (int j = 0; j < primitives.Count; j++)
                 {
-                    if (primitives[j].Intersect(new Ray(intersectionPoint, direction))) isInShadow = true;
+                    if (primitives[j].Intersect(new Ray(intersectionPoint, direction)))
+                    {
+                        isInShadow = true;
+                    }
                 }
             }
-            Vector3 color = intersection.nearestPrimitive.color;
+            Vector3 color = (0, 0, 0);
             if (!isInShadow)
             {
                 for (int i = 0; i < lights.Count; i++)
                 {
-                    float distance = Vector3.Distance(intersectionPoint, lights[i].pos);
-                    Vector3 lightToObject = lights[i].pos - intersectionPoint;
-                    lightToObject.Normalize();
-                    color = intersection.nearestPrimitive.material.materialColor(distance, color, lights[i].color, intersection.normal, lightToObject);
+                    color += intersection.nearestPrimitive.material.materialColor(ray, intersection, lights[i], intersectionPoint);
                 }
             }else
             {
                 color = (0f, 0f, 0f);
-            }  
+            }
+            color += intersection.nearestPrimitive.material.ambientLight * intersection.nearestPrimitive.color;
             return color;
         }
 
