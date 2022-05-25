@@ -30,6 +30,11 @@ namespace RayTracer
             camera.CalculateNew();
         }
 
+        public void Rotate(Vector3 rotate)
+        {
+            camera.Rotate(rotate);
+        }
+
         public void ClearScreen()
         {
             for (int y = 0; y < screen.height; y++)
@@ -48,7 +53,7 @@ namespace RayTracer
             // Rotating over X means going down
             // Rotating over Z means tilting left
 
-            this.camera = new Camera((0, 0, 0), 0, 0, 0);
+            this.camera = new Camera((0, 0, 0), (0, 0, 0));
             this.scene = new Scene(screen, camera, drawShadowRays);
              
             scene.AddPrimitive(new Sphere(new Vector3(-8, 0, 6), 3, new Diffuse((1f, 0f, 0f)), (1f, 0f, 0f)));

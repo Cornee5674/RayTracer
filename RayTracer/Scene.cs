@@ -32,7 +32,7 @@ namespace RayTracer
         {
             this.camera = camera;
             this.screen = screen;
-            this.drawShadowRays = drawShadowRays;  
+            this.drawShadowRays = drawShadowRays;
         }
         public Intersection GetClosestIntersection(Ray ray)
         {
@@ -71,7 +71,7 @@ namespace RayTracer
                     if (primitives[j].Intersect(newRay))
                     {
                         if (newRay.distance < shortestDistance && isDrawn)
-                        {                           
+                        {
                             shortestDistance = newRay.distance;
                             end = intersectionPoint + shortestDistance * direction;
                         }
@@ -115,16 +115,21 @@ namespace RayTracer
         public void DrawDebug()
         {
             Coordinate cameraCoordinate = GetCoordinate(camera.pos);
-            int location = (int)cameraCoordinate.x + (int)cameraCoordinate.z * screen.width;
-            screen.pixels[location] = 255;
-            screen.pixels[location + 1] = 255;
-            screen.pixels[location + screen.width] = 255;
-            screen.pixels[location + 1 + screen.width] = 255;
-
+            if (!(cameraCoordinate.x < minX || cameraCoordinate.x > maxX || cameraCoordinate.z < minZ || cameraCoordinate.z > maxZ))
+            {
+                int location = (int)cameraCoordinate.x + (int)cameraCoordinate.z * screen.width;
+                screen.pixels[location] = 255;
+                screen.pixels[location + 1] = 255;
+                screen.pixels[location + screen.width] = 255;
+                screen.pixels[location + 1 + screen.width] = 255;
+            }
+            
             Coordinate screenCoordinateLeft = GetCoordinate(camera.GetTopLeft());
             Coordinate screenCoordinateRight = GetCoordinate(camera.GetTopRight());
-            screen.Line((int)screenCoordinateLeft.x, (int)screenCoordinateLeft.z, (int)screenCoordinateRight.x, (int)screenCoordinateRight.z, 255 * 255 * 255);
-
+            if (!(screenCoordinateLeft.x < minX || screenCoordinateRight.x < minX || screenCoordinateLeft.x > maxX || screenCoordinateRight.x > maxX || screenCoordinateLeft.z < minZ || screenCoordinateRight.z < minZ || screenCoordinateLeft.z > maxZ || screenCoordinateRight.z > maxZ))
+            {
+                screen.Line((int)screenCoordinateLeft.x, (int)screenCoordinateLeft.z, (int)screenCoordinateRight.x, (int)screenCoordinateRight.z, 255 * 255 * 255);
+            }
             int amountOfLines = 100;
             float angle = 360f / amountOfLines;
             for (int i = 0; i < primitives.Count; i++)

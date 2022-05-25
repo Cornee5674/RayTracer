@@ -23,6 +23,10 @@ namespace RayTracer
         Vector3 up;
         Vector3 right;
 
+        Vector3 copyLookAt;
+        Vector3 copyUp;
+        Vector3 copyRight;
+
         struct ScreenPlane
         {
             public Vector3 topLeft;
@@ -33,23 +37,32 @@ namespace RayTracer
 
         ScreenPlane screenPlane;
 
-        public Camera(Vector3 cameraPos, float degreesOverY, float degreesOverX, float degreesOverZ)
+        public Camera(Vector3 cameraPos, Vector3 rotation)
         {
             this.pos = cameraPos;
             lookAt = (0, 0, 1);
             up = (0, 1, 0);
             right = (1, 0, 0);
 
-            degreesOverY /= 10;
-            degreesOverX /= 10;
-            degreesOverZ /= 10;
+            copyLookAt = lookAt;
+            copyUp = up;
+            copyRight = right;
 
-            Vector3.Transform(lookAt, new Quaternion(degreesOverX * 0.174533f, degreesOverY * 0.174533f, degreesOverZ * 0.174533f), out lookAt);
-            Vector3.Transform(up, new Quaternion(degreesOverX * 0.174533f, degreesOverY * 0.174533f, degreesOverZ * 0.174533f), out up);
-            Vector3.Transform(right, new Quaternion(degreesOverX * 0.174533f, degreesOverY * 0.174533f, degreesOverZ * 0.174533f), out right);
 
+            Rotate(rotation);
 
             CalculateNew();
+        }
+
+        public void Rotate(Vector3 rotate)
+        {
+            rotate.Y /= 10;
+            rotate.X /= 10;
+            rotate.Z /= 10;
+
+            Vector3.Transform(copyLookAt, new Quaternion(rotate.X * 0.174533f, rotate.Y * 0.174533f, rotate.Z * 0.174533f), out lookAt);
+            Vector3.Transform(copyUp, new Quaternion(rotate.X * 0.174533f, rotate.Y * 0.174533f, rotate.Z * 0.174533f), out up);
+            Vector3.Transform(copyRight, new Quaternion(rotate.X * 0.174533f, rotate.Y * 0.174533f, rotate.Z * 0.174533f), out right);
         }
 
         public void CalculateNew()
