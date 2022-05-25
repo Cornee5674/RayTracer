@@ -31,7 +31,7 @@ namespace RayTracer
             float p2 = q.LengthSquared;
             if (p2 > radius * radius)
             {
-                ray.distance = -1;
+                ray.distance = t;
                 return false;
             }
             t -= (float) Math.Sqrt(radius * radius - p2);
@@ -39,8 +39,8 @@ namespace RayTracer
             {
                 ray.distance = t;
                 return true;
-            }
-            ray.distance = -1;
+            }      
+            ray.distance = t;
             return false;
         }
 

@@ -5,6 +5,10 @@ namespace RayTracer
         // member variables
         public Surface screen;
         public Raytracer raytracer;
+
+        int x = 0;
+        int y = 0;
+        int z = 0;
         // constructor
         public MyApplication(Surface screen)
         {
@@ -19,9 +23,10 @@ namespace RayTracer
         // tick: renders one frame
         public void Tick()
         {
-            //screen.Clear(0);
-            //screen.Print("hello world", 2, 2, 0xffffff);
-            //screen.Line(2, 20, 160, 20, 0xff0000);
+            raytracer.ClearScreen();
+            z++;
+            raytracer.MoveTo((x, y, z));
+            raytracer.Render();
         }
     }
 }

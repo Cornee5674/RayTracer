@@ -33,15 +33,29 @@ namespace RayTracer
 
         ScreenPlane screenPlane;
 
-        public Camera()
+        public Camera(Vector3 cameraPos, float degreesOverY, float degreesOverX, float degreesOverZ)
         {
-            this.pos = new Vector3(0, 0, 0);
-            this.lookAt = new Vector3(0, 0, 1);
-            this.up = new Vector3(0, 1, 0);
-            this.right = new Vector3(1, 0, 0);
+            this.pos = cameraPos;
+            lookAt = (0, 0, 1);
+            up = (0, 1, 0);
+            right = (1, 0, 0);
 
+            degreesOverY /= 10;
+            degreesOverX /= 10;
+            degreesOverZ /= 10;
+
+            Vector3.Transform(lookAt, new Quaternion(degreesOverX * 0.174533f, degreesOverY * 0.174533f, degreesOverZ * 0.174533f), out lookAt);
+            Vector3.Transform(up, new Quaternion(degreesOverX * 0.174533f, degreesOverY * 0.174533f, degreesOverZ * 0.174533f), out up);
+            Vector3.Transform(right, new Quaternion(degreesOverX * 0.174533f, degreesOverY * 0.174533f, degreesOverZ * 0.174533f), out right);
+
+
+            CalculateNew();
+        }
+
+        public void CalculateNew()
+        {
             this.screenPlane = new ScreenPlane();
-            Vector3 C = pos + 0.5f*lookAt;
+            Vector3 C = pos + 0.5f * lookAt;
             screenPlane.topLeft = C + up - right;
             screenPlane.topRight = C + up + right;
             screenPlane.bottomLeft = C - up - right;
@@ -50,11 +64,13 @@ namespace RayTracer
 
         public Ray GetRay(int x, int y, int width, int height)
         {
+            Vector3 u = screenPlane.topRight - screenPlane.topLeft;
+            Vector3 v = screenPlane.bottomLeft - screenPlane.topLeft;
             float widthNorm = (float)x / width;
             float heightNorm = (float)y / height;
-            Vector3 direction = screenPlane.topLeft + widthNorm * (screenPlane.topRight - screenPlane.topLeft) + heightNorm * (screenPlane.bottomLeft - screenPlane.topLeft);
+            Vector3 point = screenPlane.topLeft + widthNorm*u + heightNorm*v;
+            Vector3 direction = point - pos;
             direction.Normalize();
-            direction -= pos;
             Ray ray = new Ray(pos, direction);
             return ray;         
         }
