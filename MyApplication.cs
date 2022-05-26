@@ -6,6 +6,7 @@ namespace RayTracer
         public Surface screen;
         public Raytracer raytracer;
 
+        // Variables for camera movement and rotation
         int x = 0;
         int y = 0;
         int z = 0;
@@ -25,13 +26,20 @@ namespace RayTracer
         // initialize
         public void Init()
         {           
+            // Read fov from console
             while (fov == -1)
             {
-                Console.WriteLine("Choose FOV in degrees");
-                int.TryParse(Console.ReadLine(), out fov);
+                Console.WriteLine("Choose FOV in degrees, 90 works best for current scene");
+                int f;
+                if (int.TryParse(Console.ReadLine(), out f))
+                {
+                    if (f > 0) fov = f;
+                }
             }
+            // Create the raytracer and render first scene
             this.raytracer = new Raytracer(screen, fov);
             raytracer.Render();
+            // Instructions for the camera
             Console.WriteLine("When pressing certain keys in the console, the camera's position or rotation will change. Note: You have to have clicked on the console so you have focus before it works");
             Console.WriteLine("You can now move the camera with WASD to move in the horizontal and vertical directions");
             Console.WriteLine("You can use Z and X to go up and down respectively");
@@ -44,6 +52,8 @@ namespace RayTracer
         
         public void Tick()
         {
+            // Every frame we check if a key is held, if so we move the camera to the new position
+            // The held key is switched to know which variable to update.
             while(Console.KeyAvailable)
             {
                 ConsoleKeyInfo cl = Console.ReadKey(true);

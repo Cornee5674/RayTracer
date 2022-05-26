@@ -9,23 +9,20 @@ using OpenTK.Mathematics;
 
 namespace RayTracer
 {
-    //which owns the scene, camera and the display surface. The Raytracer implements a
-    //method Render, which uses the camera to loop over the pixels of the screen plane and to
-    //generate a ray for each pixel, which is then used to find the nearest intersection.The result is
-    //then visualized by plotting a pixel.For the middle row of pixels (typically line 256 for a 512x512
-    //window), it generates debug output by visualizing every Nth ray(where N is e.g. 10).
     public class Raytracer
     {
         Surface screen;
         Camera camera;
         Scene scene;
 
+        // Variables to set for the debug mode
         bool drawDebugRays = true;
         bool drawShadowRays = true;
         bool drawSecondaryRays = true;
 
         public void MoveTo(Vector3 moveTo)
         {
+            // If we move to a new position, we set the camera's position to this vector and with calculatenew we calculate the new screenplane
             camera.pos = moveTo;
             camera.CalculateNew();
         }
@@ -37,6 +34,7 @@ namespace RayTracer
 
         public void ClearScreen()
         {
+            // After rendering a frame and we want to render a new one, we first clear the whole screen by setting all pixels to black
             for (int y = 0; y < screen.height; y++)
             {
                 for (int x = 0; x < screen.width; x++)
@@ -53,9 +51,22 @@ namespace RayTracer
             // Rotating over X means going down
             // Rotating over Z means tilting left
 
-            this.camera = new Camera(fov, screen);
+            this.camera = new Camera(fov);
             this.scene = new Scene(screen, camera, drawShadowRays);
              
+            // Here we can add primitives
+            // To add a sphere: new Sphere(Vector3 position, float radius, Material material, Vector3 color);
+            // To add a plane: new Plane(Vector3 knownpoint, Vector3 normal, Material material, Vector3 color);
+
+            // Materials:
+            // Diffuse(Vector3 diffusecolor)
+            // Mirror()
+            // DiffuseGlossy(float glossiness, Vector3 specularcoefficient, Vector3 diffusecolor)
+            // Glossy(float glossiness, Vector3 specularcoefficient)
+
+            // Lights:
+            // Light(Vector3 position, Vector3 color)
+
             scene.AddPrimitive(new Sphere(new Vector3(-8, 0, 6), 3, new Diffuse((1f, 0f, 0f)), (1f, 0f, 0f)));
             scene.AddPrimitive(new Sphere(new Vector3(-0.35f, 0, 10), 4, new Mirror(), (.3f, .5f, .8f)));
             scene.AddPrimitive(new Sphere(new Vector3(8, 0, 9), 3, new DiffuseGlossy(50, (0f, 1f, 0f), (0f, 1f, 0f)), (0f, 1f, 0f)));
@@ -69,31 +80,37 @@ namespace RayTracer
 
         public void Render()
         {
+            // We want to calculate a color for every x and y, x however only for half of the values because the left hand side of the view is for the debug mode
             for (int y = 0; y < screen.height; y++)
             {
                 for (int x = 0; x < screen.width / 2; x++)
                 {
+                    // isDrawn will be true if that ray happens to be a debug ray. The variable will be used to draw secondary or shadow rays from this ray.
                     bool isDrawn = false;
+                    // We get a ray for this x and y position and the closest intersection.
                     Ray ray = camera.GetRay(x, y, screen.height, screen.width / 2);
                     Intersection intersection = scene.GetClosestIntersection(ray);
                     if (y == screen.height / 2 && x % 50 == 0 && drawDebugRays)
                     {
+                        // For some x,y values with y=0 we draw a debug ray
                         isDrawn = true;
                         scene.DrawDebugRay(ray, intersection);
                     }
                     if (intersection.nearestPrimitive != null)
                     {
+                        // If an intersection has been found, we trace the color along the ray and set the pixel to this color
                         Vector3 color = Trace(intersection, ray, isDrawn);
                         int colorInt = mixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
                         screen.pixels[x + screen.width / 2 + y * screen.width] = colorInt;
                     }else
                     {
+                        // If we want to give the background a color, we do that here
                         //screen.pixels[x + screen.width / 2 + y * screen.width] = mixColor(186, 245, 255);
-                        screen.pixels[x + screen.width / 2 + y * screen.width] = 0;
                     }
                     
                 }
             }
+            // To differentiate between the debug view and scene view, we draw a line on exactly half of the screen
             for (int y = 0; y < screen.height; y++)
             {
                 for (int x = 0; x < screen.width; x++)
@@ -109,22 +126,29 @@ namespace RayTracer
 
         Vector3 Trace(Intersection intersection, Ray ray, bool isDrawn)
         {
+            
             if (intersection.nearestPrimitive.material.isMirror && ray.numberOfBounces < 100)
             {
+                // If the material is a mirror, we make a new ray that has the same angle as the incoming ray, but the other way.
                 Vector3 R = ray.direction - 2 * Vector3.Dot(ray.direction, intersection.normal) * intersection.normal;
                 ray.origin = intersection.distance * ray.direction + ray.origin;
                 ray.direction = R;
                 ray.distance = 1000;
+                // We get a new intersection and add to the numberofbounces.
                 Intersection newIntersection = scene.GetClosestIntersection(ray);
                 ray.numberOfBounces++;
+                // Since we want to draw the secondary ray of some rays, we do that here.
                 if (isDrawn && ray.numberOfBounces == 1 && drawSecondaryRays)
                 {
                     scene.DrawDebugRay(ray, newIntersection);
                 }
+                // We now recursively send rays until we found an intersection on a material that is not a mirror.
                 if (newIntersection.nearestPrimitive != null) {
+                    // Since a bit of the mirror's color will be reflected, we multiply this by the next ray's color
                     return intersection.nearestPrimitive.color * Trace(newIntersection, ray, isDrawn);
                 }
             }
+            // If the material of the intersection is not a mirror, we simply get the color of that pixel.
             Vector3 color = scene.isInLight(intersection, ray, isDrawn);
             if (color.X > 1) color.X = 1;
             if (color.Y > 1) color.Y = 1;

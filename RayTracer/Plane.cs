@@ -27,6 +27,7 @@ namespace RayTracer
 
         public override bool Intersect(Ray ray)
         {
+            // Function to intersect an ray with a plane. Result is the distance of the directional vector.
             float denominator = Vector3.Dot(ray.direction, normal);
             if (Math.Abs(denominator) > 0.0001f)
             {
@@ -43,6 +44,7 @@ namespace RayTracer
             return false;
         }
 
+        // Simple functions that return variables.
         public override Vector3 GetTextureCol(float u, float v)
         {
             return texture.getColor(u, v);

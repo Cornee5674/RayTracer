@@ -21,10 +21,9 @@ namespace RayTracer
             this.material = material;
             this.color = color;
         }
-
-        //TODO: Als object in camera zit, gekke dingen
         public override bool Intersect(Ray ray)
         {
+            // Function to intersect a ray with a sphere, and setting the distance of the directional vector
             Vector3 c = position - ray.origin;
             float t = Vector3.Dot(c, ray.direction);
             Vector3 q = c - t * ray.direction;
@@ -48,6 +47,7 @@ namespace RayTracer
 
         public override Vector3 GetNormal(Ray ray)
         {
+            // Creates a normal from a given ray. First we get the intersectionpoint, and if we subtract the spheres position we get a normal.
             Vector3 intersect = ray.origin + ray.distance * ray.direction;
             Vector3 normal = intersect - position;
             normal.Normalize();
@@ -56,10 +56,12 @@ namespace RayTracer
 
         public override float X(float angle)
         {
+            // Function to return the X value of the sphere after 'angle' degrees
             return (radius * (float)Math.Cos(angle * Math.PI / 180)) + position.X;
         }
         public override float Y(float angle)
         {
+            // Function to return the Y value of the sphere after 'angle' degrees
             return (radius * (float)Math.Sin(angle * Math.PI / 180)) + position.Z;
         }
     }

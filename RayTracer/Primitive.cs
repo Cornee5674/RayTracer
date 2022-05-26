@@ -7,11 +7,6 @@ using OpenTK.Mathematics;
 
 namespace RayTracer
 {
-    //which encapsulates the ray/primitive intersection functionality.Two classes can be
-    //derived from the base primitive: Sphere and Plane.A sphere is defined by a position and a
-    //radius; a plane is defined by a normal and a distance to the origin.Initially(until you implement
-    //materials) it may also be useful to add a color to the primitive class.
-
     public class Primitive
     {
         public string name = "Primitive";
@@ -20,31 +15,36 @@ namespace RayTracer
         public bool hasTexture = false;
         public Primitive()
         {
-            //color = new Vector3(252f / 255, 178f / 255, 199f / 255);
         }
+        
 
-
+        // Functions that primitives can override
+        // The function that intersects a ray with a primitive
         public virtual bool Intersect(Ray ray)
         {
             return false;
         }
-
+        // Function that returns the normal of planes
         public virtual Vector3 GetNormal(Ray ray)
         {
             return new Vector3(0, 0, 0);
         }
+        // Function to return a texture color
         public virtual Vector3 GetTextureCol(float u, float v)
         {
             return (0, 0, 0);
         }
+        // Function to return knownpoint of plane
         public virtual Vector3 GetO()
         {
             return (0, 0, 0);
         }
+        // Function to return x value of sphere after 'angle' degrees
         public virtual float X(float angle)
         {
             return 0;
         }
+        // Function to return y value of sphere after 'angle' degrees
         public virtual float Y(float angle)
         {
             return 0;

@@ -7,11 +7,9 @@ using OpenTK.Mathematics;
 
 namespace RayTracer
 {
-    //which stores the location and intensity of a light source.For a Whitted-style ray tracer,
-    //this will be a point light.Intensity should be stored using float values for red, green and blue.
-
     public class Light
     {
+        // Member variables, which are the only thing light needs
         public Vector3 pos;
         public Vector3 color;
 

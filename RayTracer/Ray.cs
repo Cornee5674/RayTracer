@@ -9,6 +9,8 @@ namespace RayTracer
 {
     public class Ray
     {
+        // Member variables, distance is set to 1000
+        // This means that the max view distance is 1000
         public Vector3 origin;
         public Vector3 direction;
         public float distance = 1000;
