@@ -87,6 +87,26 @@ namespace RayTracer
                 isInLight[i] = hasIntersection;
             }
             Vector3 color = (0, 0, 0);
+            if (!intersection.nearestPrimitive.hasTexture)
+            {
+                color = calcColor(isInLight, color, intersection, ray, intersectionPoint);
+            }else
+            {
+                bool light = true;
+                for (int i = 0; i < isInLight.Length; i++)
+                {
+                    if (isInLight[i]) light = false;
+                }
+                if (light)
+                {
+                    color = calcColor(isInLight, color, intersection, ray, intersectionPoint);
+                }
+            }
+            return color;
+        }
+
+        Vector3 calcColor(bool[] isInLight, Vector3 color, Intersection intersection, Ray ray, Vector3 intersectionPoint)
+        {
             for (int i = 0; i < lights.Count; i++)
             {
                 if (!isInLight[i])
@@ -94,7 +114,10 @@ namespace RayTracer
                     color += intersection.nearestPrimitive.material.materialColor(ray, intersection, lights[i], intersectionPoint);
                 }
             }
-            color += intersection.nearestPrimitive.material.ambientLight * intersection.nearestPrimitive.color;
+            if (!intersection.nearestPrimitive.hasTexture)
+            {
+                color += intersection.nearestPrimitive.material.ambientLight * intersection.nearestPrimitive.color;
+            }
             return color;
         }
 

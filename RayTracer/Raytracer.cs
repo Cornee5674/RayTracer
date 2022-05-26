@@ -46,14 +46,14 @@ namespace RayTracer
             }
         }
 
-        public Raytracer(Surface screen)
+        public Raytracer(Surface screen, int fov)
         {
             this.screen = screen;
             // Rotating over Y means going right
             // Rotating over X means going down
             // Rotating over Z means tilting left
 
-            this.camera = new Camera((0, 0, 0), (0, 0, 0));
+            this.camera = new Camera(fov, screen);
             this.scene = new Scene(screen, camera, drawShadowRays);
              
             scene.AddPrimitive(new Sphere(new Vector3(-8, 0, 6), 3, new Diffuse((1f, 0f, 0f)), (1f, 0f, 0f)));
@@ -61,9 +61,9 @@ namespace RayTracer
             scene.AddPrimitive(new Sphere(new Vector3(8, 0, 9), 3, new DiffuseGlossy(50, (0f, 1f, 0f), (0f, 1f, 0f)), (0f, 1f, 0f)));
             scene.AddPrimitive(new Sphere(new Vector3(5, -2, 4), 1, new Glossy(50, (0f, 0f, 1f)), (0f, 0f, 1f)));
 
-            scene.AddLight(new Light((-4, 8, 12), (50f, 50f, 50f)));
-            scene.AddLight(new Light((4, 8, 12), (50f, 50f, 50f)));
-            scene.AddPrimitive(new Plane(new Vector3(0, -3f, 10), (0, 1, 0), new Diffuse((252f / 255, 178f / 255, 199f / 255)), (252f / 255, 178f / 255, 199f / 255)));
+            scene.AddLight(new Light((-4, 8, 2), (50f, 50f, 50f)));
+            scene.AddLight(new Light((4, 8, 2), (50f, 50f, 50f)));
+            scene.AddPrimitive(new Plane(new Vector3(0, -3f, 10), (0, 1, 0), new Diffuse((252f / 255, 178f / 255, 199f / 255)), (0, 0, 0)));
 
         }
 
@@ -88,7 +88,8 @@ namespace RayTracer
                         screen.pixels[x + screen.width / 2 + y * screen.width] = colorInt;
                     }else
                     {
-                        screen.pixels[x + screen.width / 2 + y * screen.width] = mixColor(0, 0, 0);
+                        //screen.pixels[x + screen.width / 2 + y * screen.width] = mixColor(186, 245, 255);
+                        screen.pixels[x + screen.width / 2 + y * screen.width] = 0;
                     }
                     
                 }

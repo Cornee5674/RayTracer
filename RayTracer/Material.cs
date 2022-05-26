@@ -30,7 +30,24 @@ namespace RayTracer
         {
             float distanceSquared = Vector3.DistanceSquared(light.pos, intersectionPoint);
             float distanceAttenuation = 1 / distanceSquared;
-            Vector3 newLight = light.color * diffuseColor;
+            Vector3 newLight;
+            if (!intersection.nearestPrimitive.hasTexture)
+            {
+                newLight = light.color * diffuseColor;
+            }else
+            {
+                Vector3 normal = intersection.nearestPrimitive.GetNormal(ray);
+                Vector3 O = intersection.nearestPrimitive.GetO();
+                Vector3 u;
+                Vector3.Transform(normal, new Quaternion(9 * 0.174533f, 0, 0), out u);
+                Vector3 v = Vector3.Cross(normal, u);
+
+                Vector3 PtoO = intersectionPoint - O;
+                float uD = Vector3.Dot(PtoO, u);
+                float vD = Vector3.Dot(PtoO, v);
+                return intersection.nearestPrimitive.GetTextureCol(uD, vD);
+                //newLight = light.color * intersection.nearestPrimitive.GetTextureCol(uD, vD);
+            }
             Vector3 toLight = light.pos - intersectionPoint;
             toLight.Normalize();
             float angle = Math.Max(0, Vector3.Dot(intersection.normal, toLight));
@@ -95,12 +112,6 @@ namespace RayTracer
         public Mirror()
         {
             this.isMirror = true;
-        }
-    }
-    public class NoMaterial: Material
-    {
-        public NoMaterial()
-        {
         }
     }
 }

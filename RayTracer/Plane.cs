@@ -11,6 +11,7 @@ namespace RayTracer
     {
         Vector3 knownPoint;
         Vector3 normal;
+        Texture texture;
 
         public string name = "Plane";
 
@@ -20,6 +21,8 @@ namespace RayTracer
             this.normal = normal;
             this.material = material;
             this.color = color;
+            this.hasTexture = true;
+            this.texture = new CheckerBoard();
         }
 
         public override bool Intersect(Ray ray)
@@ -38,6 +41,16 @@ namespace RayTracer
             }
             ray.distance = -1;
             return false;
+        }
+
+        public override Vector3 GetTextureCol(float u, float v)
+        {
+            return texture.getColor(u, v);
+        }
+
+        public override Vector3 GetO()
+        {
+            return knownPoint;
         }
 
         public override Vector3 GetNormal(Ray ray)

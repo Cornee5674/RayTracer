@@ -19,11 +19,25 @@ namespace RayTracer
         {
             this.screen = screen;       
         }
+
+        int fov = -1;
+
         // initialize
         public void Init()
         {           
-            this.raytracer = new Raytracer(screen);
+            while (fov == -1)
+            {
+                Console.WriteLine("Choose FOV in degrees");
+                int.TryParse(Console.ReadLine(), out fov);
+            }
+            this.raytracer = new Raytracer(screen, fov);
             raytracer.Render();
+            Console.WriteLine("When pressing certain keys in the console, the camera's position or rotation will change. Note: You have to have clicked on the console so you have focus before it works");
+            Console.WriteLine("You can now move the camera with WASD to move in the horizontal and vertical directions");
+            Console.WriteLine("You can use Z and X to go up and down respectively");
+            Console.WriteLine("You can press N or M to turn left or right");
+            Console.WriteLine("You can press K or K to turn upwards or downwards");
+            Console.WriteLine("You can press O or P to tilt the camera left or right");
         }
         // tick: renders one frame
 

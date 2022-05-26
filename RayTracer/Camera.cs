@@ -19,6 +19,8 @@ namespace RayTracer
     {
         public Vector3 pos;
 
+        float FOV;
+
         Vector3 lookAt;
         Vector3 up;
         Vector3 right;
@@ -35,21 +37,27 @@ namespace RayTracer
             public Vector3 bottomRight;
         }
 
+        bool foundD = false;
+        float d = 0;
+
         ScreenPlane screenPlane;
 
-        public Camera(Vector3 cameraPos, Vector3 rotation)
+        Surface screen;
+        float aspectratio;
+        public Camera(float FOV, Surface screen)
         {
-            this.pos = cameraPos;
+            this.screen = screen;
+            this.pos = (0, 0, 0);
             lookAt = (0, 0, 1);
             up = (0, 1, 0);
-            right = (1, 0, 0);
+            right = new Vector3(1, 0, 0);
 
             copyLookAt = lookAt;
             copyUp = up;
             copyRight = right;
+            this.FOV = FOV;
 
 
-            Rotate(rotation);
 
             CalculateNew();
         }
@@ -68,7 +76,31 @@ namespace RayTracer
         public void CalculateNew()
         {
             this.screenPlane = new ScreenPlane();
-            Vector3 C = pos + 0.5f * lookAt;
+            if (!foundD)
+            {
+                for (float i = 0; i < 50f; i += 0.01f)
+                {
+                    Vector3 C = pos + i * lookAt;
+                    Vector3 left = (pos + i * lookAt) - right;
+                    float angle = (float)Math.Acos(Vector3.Dot(C, left) / (C.Length * left.Length)) * 2 * 57.2958f;
+                    if (angle >= FOV - 1 && angle <= FOV + 1)
+                    {
+                        d = i;
+                        foundD = true;
+                        MakeScreenplane(C);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Vector3 C = pos + d * lookAt;
+                MakeScreenplane(C);
+            }
+        }
+
+        void MakeScreenplane(Vector3 C)
+        {
             screenPlane.topLeft = C + up - right;
             screenPlane.topRight = C + up + right;
             screenPlane.bottomLeft = C - up - right;

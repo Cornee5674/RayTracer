@@ -17,7 +17,7 @@ namespace RayTracer
         public string name = "Primitive";
         public Material material;
         public Vector3 color;
-
+        public bool hasTexture = false;
         public Primitive()
         {
             //color = new Vector3(252f / 255, 178f / 255, 199f / 255);
@@ -32,6 +32,14 @@ namespace RayTracer
         public virtual Vector3 GetNormal(Ray ray)
         {
             return new Vector3(0, 0, 0);
+        }
+        public virtual Vector3 GetTextureCol(float u, float v)
+        {
+            return (0, 0, 0);
+        }
+        public virtual Vector3 GetO()
+        {
+            return (0, 0, 0);
         }
         public virtual float X(float angle)
         {
