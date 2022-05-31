@@ -40,7 +40,7 @@ namespace RayTracer
             // Read fov from console
             while (fov == -1)
             {
-                Console.WriteLine("Choose FOV in degrees, 90 works best for current scene");
+                Console.WriteLine("Choose FOV in angles, 90 works best for current scene");
                 int f;
                 if (int.TryParse(Console.ReadLine(), out f))
                 {
@@ -52,10 +52,13 @@ namespace RayTracer
             Console.WriteLine("Note that for shadow rays or secondary rays to show, debug rays must be enabled");
             Console.WriteLine("Debug Rays (green color):");
             bool.TryParse(Console.ReadLine(), out drawDebugRays);
-            Console.WriteLine("Shadow Rays: (blue color)");
-            bool.TryParse(Console.ReadLine(), out drawShadowRays);
-            Console.WriteLine("Secondary Rays: (green color)");
-            bool.TryParse(Console.ReadLine(), out drawSecondaryRays);
+            if (drawDebugRays)
+            {
+                Console.WriteLine("Shadow Rays: (blue color)");
+                bool.TryParse(Console.ReadLine(), out drawShadowRays);
+                Console.WriteLine("Secondary Rays: (green color)");
+                bool.TryParse(Console.ReadLine(), out drawSecondaryRays);
+            }            
             this.raytracer = new Raytracer(screen, fov, drawDebugRays, drawShadowRays, drawSecondaryRays);
             raytracer.StartRender();
             // Instructions for the camera
@@ -63,7 +66,7 @@ namespace RayTracer
             Console.WriteLine("You can now move the camera with WASD to move in the horizontal and vertical directions");
             Console.WriteLine("You can use Z and X to go up and down respectively");
             Console.WriteLine("You can press N or M to turn left or right");
-            Console.WriteLine("You can press K or K to turn upwards or downwards");
+            Console.WriteLine("You can press K or L to turn upwards or downwards");
             Console.WriteLine("You can press O or P to tilt the camera left or right");
         }
         // tick: renders one frame

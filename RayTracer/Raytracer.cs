@@ -23,30 +23,6 @@ namespace RayTracer
         int threads;
         int perThread;
 
-        public void MoveTo(Vector3 moveTo)
-        {
-            // If we move to a new position, we set the camera's position to this vector and with calculatenew we calculate the new screenplane
-            camera.pos = moveTo;
-            camera.CalculateNew();
-        }
-
-        public void Rotate(Vector3 rotate)
-        {
-            camera.Rotate(rotate);
-        }
-
-        public void ClearScreen()
-        {
-            // After rendering a frame and we want to render a new one, we first clear the whole screen by setting all pixels to black
-            for (int y = 0; y < screen.height; y++)
-            {
-                for (int x = 0; x < screen.width; x++)
-                {
-                    screen.pixels[x + y * screen.width] = 0;
-                }
-            }
-        }
-
         public Raytracer(Surface screen, int fov, bool drawDebugRays, bool drawShadowRays, bool drawSecondaryRays)
         {
             this.screen = screen;
@@ -74,6 +50,7 @@ namespace RayTracer
             // Lights:
             // Light(Vector3 position, Vector3 color)
 
+            // ADD PRIMITIVES/LIGHTS HERE
             scene.AddPrimitive(new Sphere(new Vector3(-8, 0, 6), 3, new Diffuse((1f, 0f, 0f)), (1f, 0f, 0f)));
             scene.AddPrimitive(new Sphere(new Vector3(-0.35f, 0, 10), 4, new Mirror(), (.3f, .5f, .8f)));
             scene.AddPrimitive(new Sphere(new Vector3(8, 0, 9), 3, new DiffuseGlossy(50, (0f, 1f, 0f), (0f, 1f, 0f)), (0f, 1f, 0f)));
@@ -88,6 +65,31 @@ namespace RayTracer
             bools = new bool[threads];
 
         }
+
+        public void MoveTo(Vector3 moveTo)
+        {
+            // If we move to a new position, we set the camera's position to this vector and with calculatenew we calculate the new screenplane
+            camera.pos = moveTo;
+            camera.CalculateNew();
+        }
+
+        public void Rotate(Vector3 rotate)
+        {
+            camera.Rotate(rotate);
+        }
+
+        public void ClearScreen()
+        {
+            // After rendering a frame and we want to render a new one, we first clear the whole screen by setting all pixels to black
+            for (int y = 0; y < screen.height; y++)
+            {
+                for (int x = 0; x < screen.width; x++)
+                {
+                    screen.pixels[x + y * screen.width] = 0;
+                }
+            }
+        }
+
         Thread[] threadArray;
         bool[] bools;
         bool canRender = true;
