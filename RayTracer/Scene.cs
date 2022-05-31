@@ -155,10 +155,13 @@ namespace RayTracer
             if (!(cameraCoordinate.x < min.x || cameraCoordinate.x > max.x || cameraCoordinate.z > min.z || cameraCoordinate.z < max.z))
             {
                 int location = (int)cameraCoordinate.x + (int)cameraCoordinate.z * screen.width;
-                screen.pixels[location] = 255;
-                screen.pixels[location + 1] = 255;
-                screen.pixels[location + screen.width] = 255;
-                screen.pixels[location + 1 + screen.width] = 255;
+                if (location + 1 + screen.width <= screen.width * screen.height)
+                {
+                    screen.pixels[location] = 255;
+                    screen.pixels[location + 1] = 255;
+                    screen.pixels[location + screen.width] = 255;
+                    screen.pixels[location + 1 + screen.width] = 255;
+                }             
             }
             
             // We do the same but now with the screen

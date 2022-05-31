@@ -2,6 +2,7 @@
 
 My raytracer has all the minimum requirements. Aside from those, I have also implemented multi-threading. The application automatically decides how many cores to use for rendering.
 All cores will be used, so on a 16 core system, 16 threads will be created for rendering.
+All source code that is written by me (except for MyApplication.cs) will be in the folder: RayTracer within the root directory
 
 When opening the application, some text will appear in the console that opens next to it. It first asks for a FOV. It must be above 0 and an integer. If those requirements
 are not met, the same question pops up again. 
@@ -20,6 +21,8 @@ To tilt left or right, you can press O or P.
 For this to work, you have to have focus on the console. This means that you have to type the commands in the console but they will not appear on the console. Clicking on the scene will make it that you get a still image.
 You can press the keys to move by 4 units each time, but you can also hold the key to go really fast. Watch out though, with high fps it moves really fast.
 The scene will only rerender once the whole scene is done with rendering AND the user has moved the camera. Since multi-threading is enabled, continuously moving will not look pretty since rendering needs time.
+
+If you want to add primitives to the scene, you can go to RayTracer/Raytracer.cs, line 53. There are instructions there to add primitives.
 
 The sources used are the following:
 https://raytracing.github.io/books/RayTracingInOneWeekend.html
