@@ -20,6 +20,9 @@ namespace RayTracer
         bool drawShadowRays = true;
         bool drawSecondaryRays = true;
 
+        int threads;
+        int perThread;
+
         public void MoveTo(Vector3 moveTo)
         {
             // If we move to a new position, we set the camera's position to this vector and with calculatenew we calculate the new screenplane
@@ -44,16 +47,20 @@ namespace RayTracer
             }
         }
 
-        public Raytracer(Surface screen, int fov)
+        public Raytracer(Surface screen, int fov, bool drawDebugRays, bool drawShadowRays, bool drawSecondaryRays)
         {
             this.screen = screen;
+            this.drawDebugRays = drawDebugRays;
+            this.drawShadowRays = drawShadowRays;
+            this.drawSecondaryRays = drawSecondaryRays;
+            threads = Environment.ProcessorCount;
             // Rotating over Y means going right
             // Rotating over X means going down
             // Rotating over Z means tilting left
 
             this.camera = new Camera(fov);
             this.scene = new Scene(screen, camera, drawShadowRays);
-             
+
             // Here we can add primitives
             // To add a sphere: new Sphere(Vector3 position, float radius, Material material, Vector3 color);
             // To add a plane: new Plane(Vector3 knownpoint, Vector3 normal, Material material, Vector3 color);
@@ -76,12 +83,74 @@ namespace RayTracer
             scene.AddLight(new Light((4, 8, 2), (50f, 50f, 50f)));
             scene.AddPrimitive(new Plane(new Vector3(0, -3f, 10), (0, 1, 0), new Diffuse((252f / 255, 178f / 255, 199f / 255)), (0, 0, 0)));
 
+            perThread = screen.height / threads;
+            threadArray = new Thread[threads];
+            bools = new bool[threads];
+
+        }
+        Thread[] threadArray;
+        bool[] bools;
+        bool canRender = true;
+        public bool CanRender()
+        {
+            return canRender;
         }
 
-        public void Render()
+        public void StartRender()
+        {
+            if (canRender)
+            {
+                // Starting threads
+                for (int i = 0; i < threads; i++)
+                {
+                    bools[i] = false;
+                    int startY = i * perThread;
+                    int endY = i * perThread + perThread;
+                    if (i == threads - 1) endY = screen.height;
+                    threadArray[i] = new Thread(() => Render(startY, endY));
+                    threadArray[i].Start();
+                }
+                canRender = false;
+            }
+        }
+
+        public Vector3 cameraLookAt()
+        {
+            return camera.lookAt;
+        }
+
+        public Vector3 cameraRight()
+        {
+            return camera.right;
+        }
+
+        public Vector3 cameraUp()
+        {
+            return camera.up;
+        }
+
+        public void MakeCanRender()
+        {
+            // Check to see if rendering is done
+            bool t = true;
+            for (int i = 0; i < bools.Length; i++)
+            {
+                if (!bools[i])
+                {
+                    t = false;
+                }
+            }
+            if (t)
+            {
+                canRender = true;
+            }
+        }
+
+
+        public void Render(int startY, int endY)
         {
             // We want to calculate a color for every x and y, x however only for half of the values because the left hand side of the view is for the debug mode
-            for (int y = 0; y < screen.height; y++)
+            for (int y = startY; y < endY; y++)
             {
                 for (int x = 0; x < screen.width / 2; x++)
                 {
@@ -110,6 +179,13 @@ namespace RayTracer
                     
                 }
             }
+            bools[startY / perThread] = true;
+            DrawLine();
+        }
+
+
+        void DrawLine()
+        {
             // To differentiate between the debug view and scene view, we draw a line on exactly half of the screen
             for (int y = 0; y < screen.height; y++)
             {

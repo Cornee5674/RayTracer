@@ -16,9 +16,9 @@ namespace RayTracer
 
         float FOV;
 
-        Vector3 lookAt;
-        Vector3 up;
-        Vector3 right;
+        public Vector3 lookAt;
+        public Vector3 up;
+        public Vector3 right;
 
         Vector3 copyLookAt;
         Vector3 copyUp;
@@ -44,7 +44,7 @@ namespace RayTracer
             this.pos = (0, 0, 0);
             lookAt = (0, 0, 1);
             up = (0, 1, 0);
-            right = new Vector3(1, 0, 0);
+            right = (1, 0, 0);
 
             copyLookAt = lookAt;
             copyUp = up;

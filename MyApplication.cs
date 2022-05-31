@@ -1,3 +1,4 @@
+using OpenTK.Mathematics;
 namespace RayTracer
 {
     class MyApplication
@@ -7,13 +8,18 @@ namespace RayTracer
         public Raytracer raytracer;
 
         // Variables for camera movement and rotation
-        int x = 0;
-        int y = 0;
-        int z = 0;
+        Vector3 moveTo = (0, 0, 0);
 
         int xRotation = 0;
         int yRotation = 0;
         int zRotation = 0;
+
+        Vector3 copyMoveTo;
+
+        int copyXRotation;
+        int copyYRotation;
+        int copyZRotation;
+
 
         // constructor
         public MyApplication(Surface screen)
@@ -23,9 +29,14 @@ namespace RayTracer
 
         int fov = -1;
 
+        bool drawDebugRays = false;
+        bool drawShadowRays = false;
+        bool drawSecondaryRays = false;
+
         // initialize
         public void Init()
-        {           
+        {
+            setCopys();
             // Read fov from console
             while (fov == -1)
             {
@@ -37,8 +48,16 @@ namespace RayTracer
                 }
             }
             // Create the raytracer and render first scene
-            this.raytracer = new Raytracer(screen, fov);
-            raytracer.Render();
+            Console.WriteLine("Set the debug rays: typing anything else then 'true' means not drawing those debug rays");
+            Console.WriteLine("Note that for shadow rays or secondary rays to show, debug rays must be enabled");
+            Console.WriteLine("Debug Rays (green color):");
+            bool.TryParse(Console.ReadLine(), out drawDebugRays);
+            Console.WriteLine("Shadow Rays: (blue color)");
+            bool.TryParse(Console.ReadLine(), out drawShadowRays);
+            Console.WriteLine("Secondary Rays: (green color)");
+            bool.TryParse(Console.ReadLine(), out drawSecondaryRays);
+            this.raytracer = new Raytracer(screen, fov, drawDebugRays, drawShadowRays, drawSecondaryRays);
+            raytracer.StartRender();
             // Instructions for the camera
             Console.WriteLine("When pressing certain keys in the console, the camera's position or rotation will change. Note: You have to have clicked on the console so you have focus before it works");
             Console.WriteLine("You can now move the camera with WASD to move in the horizontal and vertical directions");
@@ -60,47 +79,65 @@ namespace RayTracer
                 switch (cl.KeyChar)
                 {
                     case 'w':
-                        z++;
+                        moveTo += raytracer.cameraLookAt() * 4;
                         break;
                     case 'a':
-                        x--;                     
+                        moveTo -= raytracer.cameraRight() * 4;                     
                         break;
                     case 'd':
-                        x++;
+                        moveTo += raytracer.cameraRight() * 4;
                         break;
                     case 's':
-                        z--;
+                        moveTo -= raytracer.cameraLookAt() * 4;
                         break;
                     case 'z':
-                        y++;
+                        moveTo += raytracer.cameraUp() * 4;
                         break;
                     case 'x':
-                        y--;
+                        moveTo -= raytracer.cameraUp() * 4;
                         break;
                     case 'n':
-                        yRotation++;
+                        yRotation += 4;
                         break;
                     case 'm':
-                        yRotation--;
+                        yRotation -= 4;
                         break;
                     case 'k':
-                        xRotation++;
+                        xRotation += 4;
                         break;
                     case 'l':
-                        xRotation--;
+                        xRotation -= 4;
                         break;
                     case 'o':
-                        zRotation++;
+                        zRotation += 4;
                         break;
                     case 'p':
-                        zRotation--;
+                        zRotation -= 4;
                         break;
                 }                         
             }
-            raytracer.ClearScreen();
-            raytracer.MoveTo((x, y, z));
-            raytracer.Rotate((xRotation, yRotation, zRotation));
-            raytracer.Render();
+            raytracer.MakeCanRender();
+            if (raytracer.CanRender())
+            {
+                if (moveTo != copyMoveTo || xRotation != copyXRotation || yRotation != copyYRotation || zRotation != copyZRotation)
+                {
+                    raytracer.ClearScreen();
+                    raytracer.MoveTo(moveTo);
+                    raytracer.Rotate((xRotation, yRotation, zRotation));
+                    raytracer.StartRender();
+
+                    setCopys();
+
+                }             
+            }          
+        }
+
+        void setCopys()
+        {
+            copyMoveTo = moveTo;
+            copyXRotation = xRotation;
+            copyYRotation = yRotation;
+            copyZRotation = zRotation;
         }
     }
 }
